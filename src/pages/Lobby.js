@@ -1,8 +1,16 @@
-import React from "react";
+import React, {useState} from "react";
 import ConnectLive from "@connectlive/connectlive-web-sdk";
 import "./style.css";
 
 function Lobby() {
+  const [createRoomId, setCreateRoomId] = useState('');
+  const [joinRoomId, setJoinRoomId] = useState('');
+
+
+  const changeRoomId = (evt) => {
+    evt.target.name === 'create' ? setCreateRoomId(evt.target.value) : setJoinRoomId(evt.target.value);
+  }
+
   return (
       <div className="container">
         <header>
@@ -11,11 +19,11 @@ function Lobby() {
         <main>
           <section className="connect-room">
             <form>
-              <input placeholder="Room ID" />
+              <input name="create" placeholder="Room ID" value={createRoomId} onChange={changeRoomId} />
               <button>Create Room</button>
             </form>
             <form>
-              <input placeholder="Room ID" />
+              <input name="join" placeholder="Room ID" value={joinRoomId} onChange={changeRoomId}/>
               <button>Join Room</button>
             </form>
           </section>
