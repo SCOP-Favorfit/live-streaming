@@ -97,13 +97,13 @@ function Room() {
 
   return (
       <div className="container">
-        <header>
-          <h1>Room: {roomId}</h1>
+        <header className="room-header">
+          <h1 className="room-title">{roomId}</h1>
           <button onClick={disconnectRoom}>Exit</button>
         </header>
         <main>
           <div className="room-content">
-            <section>
+            <section className="room-video-container">
               <div id="local-container"></div>
               <div id="remote-container"></div>
               <div>
@@ -111,7 +111,7 @@ function Room() {
                 {remoteParticipants.map((participant) => (<div key={participant}>{participant}</div>))}
               </div>
             </section>
-            <section>
+            <section className="room-chat-container">
               <Chat />
             </section>
           </div>
