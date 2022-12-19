@@ -4,6 +4,7 @@ import {RoomIdState, RoomState} from "store/roomState";
 import ConnectLive from "@connectlive/connectlive-web-sdk";
 import {HostState} from "store/hostState";
 import {useNavigate} from "react-router";
+import Chat from "components/Chat";
 
 function Room() {
   const navigate = useNavigate();
@@ -66,10 +67,10 @@ function Room() {
           setRemoteParticipants((oldRemoteParticipants) => [...oldRemoteParticipants, participant.id]);
         }
       });
-      room.on('disconnected', async () => {
-        disconnectRoom();
-      });
     } // end of guest event
+    room.on('disconnected', async () => {
+      disconnectRoom();
+    });
     _room.on('participantEntered', (evt) => {
       setRemoteParticipants((oldRemoteParticipants) => [
         ...oldRemoteParticipants,
@@ -110,7 +111,9 @@ function Room() {
                 {remoteParticipants.map((participant) => (<div key={participant}>{participant}</div>))}
               </div>
             </section>
-            <section>Chat</section>
+            <section>
+              <Chat />
+            </section>
           </div>
         </main>
       </div>
