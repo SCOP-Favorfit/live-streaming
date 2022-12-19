@@ -5,7 +5,7 @@ import ConnectLive from "@connectlive/connectlive-web-sdk";
 import {HostState} from "store/hostState";
 import {useNavigate} from "react-router";
 import Chat from "components/Chat";
-import "./styles/style.css";
+import "../styles/style.css";
 
 function Room() {
   const navigate = useNavigate();

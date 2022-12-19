@@ -1,7 +1,7 @@
 import React, {useState} from "react";
 import {useNavigate} from "react-router";
 import ConnectLive from "@connectlive/connectlive-web-sdk";
-import "./styles/style.css";
+import "../styles/style.css";
 import {useRecoilState} from "recoil";
 import {HostState} from "store/hostState";
 import {RoomIdState, RoomState} from "store/roomState";
@@ -12,7 +12,7 @@ function Lobby() {
   const [createRoomId, setCreateRoomId] = useState('');
   const [joinRoomId, setJoinRoomId] = useState('');
   const [roomId, setRoomId] = useRecoilState(RoomIdState);
-  const [room, setRoom] = useRecoilState(RoomState);
+  const [, setRoom] = useRecoilState(RoomState);
   const [connectingMsg, setConnectingMsg] = useState('');
 
   const joinRoom = async (evt) => {
