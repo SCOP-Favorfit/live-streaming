@@ -18,3 +18,14 @@
   height: 40px;
   margin-left: 8px;
 }
+
+.room-content {
+  display: flex;
+  justify-content: center;
+}
+
+.room-content section {
+  width: 400px;
+  max-width: 40vw;
+  border: 1px solid black;
+}
