@@ -4,6 +4,7 @@ import {RoomIdState, RoomState} from "store/roomState";
 import ConnectLive from "@connectlive/connectlive-web-sdk";
 import {HostState} from "store/hostState";
 import {useNavigate} from "react-router";
+import Chat from "components/Chat";
 
 function Room() {
   const navigate = useNavigate();
@@ -11,6 +12,7 @@ function Room() {
   const [room,] = useRecoilState(RoomState);
   const [isHost, setIsHost] = useRecoilState(HostState);
   const [localMedia, setLocalMedia] = useState(null);
+  const [remoteParticipants, setRemoteParticipants] = useState([]);
 
   useEffect(() => {
     init();
@@ -18,7 +20,6 @@ function Room() {
 
   const init = async() => {
     const _room = room;
-    console.log(room.localParticipant);
     if (isHost) {
       const _localMedia = await ConnectLive.createLocalMedia({
         video: true,
@@ -30,13 +31,6 @@ function Room() {
       localContainer.textContent = '';
       localContainer.appendChild(localVideo)
       await room.publish([_localMedia]);
-
-      _room.on('participantEntered', (evt) => {
-        console.log(`## ${evt.remoteParticipant.id} joined`);
-      });
-      _room.on('participantLeft', (evt) => {
-        console.log(`## ${evt.remoteParticipantId} left`);
-      });
     } // end of host event
     else {
       _room.on('connected', async (evt) => {
@@ -70,12 +64,26 @@ function Room() {
               });
             }
           });
+          setRemoteParticipants((oldRemoteParticipants) => [...oldRemoteParticipants, participant.id]);
         }
       });
-      room.on('disconnected', async () => {
-        disconnectRoom();
-      });
     } // end of guest event
+    room.on('disconnected', async () => {
+      disconnectRoom();
+    });
+    _room.on('participantEntered', (evt) => {
+      setRemoteParticipants((oldRemoteParticipants) => [
+        ...oldRemoteParticipants,
+        evt.remoteParticipant.id,
+      ]);
+    });
+    _room.on('participantLeft', (evt) => {
+      setRemoteParticipants((oldRemoteParticipants) => {
+        return oldRemoteParticipants.filter((participant) => {
+          return evt.remoteParticipantId !== participant;
+        });
+      });
+    });
   }
 
   const disconnectRoom = () => {
@@ -98,8 +106,14 @@ function Room() {
             <section>
               <div id="local-container"></div>
               <div id="remote-container"></div>
+              <div>
+                <h1>Participants</h1>
+                {remoteParticipants.map((participant) => (<div key={participant}>{participant}</div>))}
+              </div>
             </section>
-            <section>Chat</section>
+            <section>
+              <Chat />
+            </section>
           </div>
         </main>
       </div>
