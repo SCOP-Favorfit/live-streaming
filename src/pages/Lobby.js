@@ -45,7 +45,7 @@ function Lobby() {
 
     setConnectingMsg('');
     setRoom(_room);
-    await room.connect(roomId);
+    await _room.connect(roomId);
   };
 
   const changeRoomId = (evt) => {
