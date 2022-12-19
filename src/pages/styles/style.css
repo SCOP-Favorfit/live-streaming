@@ -1,7 +1,21 @@
+@import "roomStyle.css";
+@import "chatStyle.css";
+
+ul, li {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  list-style:none;
+  text-align: left;
+}
+
 .container {
+  width: 60vw;
+  max-width: 1200px;
   display: flex;
   flex-direction: column;
   text-align: center;
+  margin: 40px auto;
 }
 
 .connect-room form {
@@ -17,19 +31,4 @@
   width: 120px;
   height: 40px;
   margin-left: 8px;
-}
-
-.room-content {
-  display: flex;
-  justify-content: center;
-}
-
-.room-content section {
-  width: 400px;
-  max-width: 40vw;
-  margin: 20px;
-}
-
-.room-content video {
-  width: 400px;
 }

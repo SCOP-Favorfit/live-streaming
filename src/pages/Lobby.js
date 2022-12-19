@@ -1,7 +1,7 @@
 import React, {useState} from "react";
 import {useNavigate} from "react-router";
 import ConnectLive from "@connectlive/connectlive-web-sdk";
-import "./style.css";
+import "./styles/style.css";
 import {useRecoilState} from "recoil";
 import {HostState} from "store/hostState";
 import {RoomIdState, RoomState} from "store/roomState";

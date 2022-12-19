@@ -42,13 +42,13 @@ const Chat = () => {
   }, [room]);
 
   return (
-      <aside>
-        <ul>
+      <aside class="chat-container">
+        <ul className="message-container">
           {
             messages.map((item, i)=>{
               return (
                   <li key={i}>
-                    <span className='decoration-sky-500/30 mr-1.5'>[{item.senderId}]</span>
+                    <span className='decoration-sky-500/30 mr-1.5'>{item.senderId}: </span>
                     <span>{item.message}</span>
                   </li>
               );
@@ -58,6 +58,7 @@ const Chat = () => {
         <form onSubmit={handleSubmit}>
           <div>
             <input
+                className="massage-input"
                 type='text'
                 placeholder='input message'
                 value={message}

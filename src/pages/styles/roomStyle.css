@@ -1,0 +1,29 @@
+.room-header {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  border-radius: 12px;
+  border: 1px solid lightgrey;
+  padding: 12px;
+  margin-bottom: 20px;
+  box-sizing: border-box;
+}
+
+.room-content{
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+
+.room-video-container, .room-chat-container {
+  width: 49%;
+  height: 70vh;
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid lightgrey;
+  box-sizing: border-box;
+}
+
+.room-video-container video {
+  width: 100%;
+}
