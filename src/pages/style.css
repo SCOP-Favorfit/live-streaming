@@ -1,0 +1,35 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+}
+
+.connect-room form {
+  margin: 20px;
+}
+
+.connect-room input{
+  width: 200px;
+  height: 34px;
+}
+
+.connect-room button {
+  width: 120px;
+  height: 40px;
+  margin-left: 8px;
+}
+
+.room-content {
+  display: flex;
+  justify-content: center;
+}
+
+.room-content section {
+  width: 400px;
+  max-width: 40vw;
+  margin: 20px;
+}
+
+.room-content video {
+  width: 400px;
+}
