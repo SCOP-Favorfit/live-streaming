@@ -27,5 +27,9 @@
 .room-content section {
   width: 400px;
   max-width: 40vw;
-  border: 1px solid black;
+  margin: 20px;
+}
+
+.room-content video {
+  width: 400px;
 }
