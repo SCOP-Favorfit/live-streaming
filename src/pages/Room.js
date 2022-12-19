@@ -1,4 +1,4 @@
-import React, {useEffect} from "react";
+import React, {useState, useEffect} from "react";
 import {useRecoilState} from "recoil";
 import {RoomIdState, RoomState} from "store/roomState";
 import ConnectLive from "@connectlive/connectlive-web-sdk";
@@ -9,7 +9,8 @@ function Room() {
   const navigate = useNavigate();
   const [roomId,] = useRecoilState(RoomIdState);
   const [room,] = useRecoilState(RoomState);
-  const [isHost,] = useRecoilState(HostState);
+  const [isHost, setIsHost] = useRecoilState(HostState);
+  const [localMedia, setLocalMedia] = useState(null);
 
   useEffect(() => {
     init();
@@ -71,16 +72,26 @@ function Room() {
           });
         }
       });
+      room.on('disconnected', async () => {
+        disconnectRoom();
+      });
     } // end of guest event
   }
 
-
+  const disconnectRoom = () => {
+    room.disconnect();
+    ConnectLive.signOut();
+    localMedia?.stop();
+    setLocalMedia(null);
+    setIsHost(false);
+    navigate('/');
+  }
 
   return (
       <div className="container">
         <header>
           <h1>Room: {roomId}</h1>
-          <button>Exit</button>
+          <button onClick={disconnectRoom}>Exit</button>
         </header>
         <main>
           <div className="room-content">
