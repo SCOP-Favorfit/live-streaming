@@ -113,7 +113,7 @@ function Room() {
               </div>
             </section>
             <section className="room-chat-container">
-              <Chat />
+              <Chat remoteParticipants={remoteParticipants}/>
             </section>
           </div>
         </main>

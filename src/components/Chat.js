@@ -3,7 +3,7 @@ import { useRecoilState } from 'recoil';
 import { useEffect } from 'react';
 import {RoomState} from "store/roomState";
 
-const Chat = () => {
+const Chat = (props) => {
   const [target,] = useState('');
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState([]);
@@ -57,6 +57,14 @@ const Chat = () => {
         </ul>
         <form onSubmit={handleSubmit}>
           <div>
+            <select name='forUser'>
+              <option value='' selected>전체</option>
+              {
+                room.remoteParticipants.map((participant, i) => {
+                  return (<option value={participant.id}>{participant.id}</option>);
+                })
+              }
+            </select>
             <input
                 className="massage-input"
                 type='text'
