@@ -4,9 +4,11 @@ import {useRecoilState} from "recoil";
 import ConnectLive from "@connectlive/connectlive-web-sdk";
 import {RoomIdState, RoomState} from "store/roomState";
 import {HostState} from "store/hostState";
-import {LocalMediaState} from "store/localState";
+import {LocalMediaState} from "store/localState";;
+import { useNavigate } from "react-router";
 import Chat from "components/Chat";
 import LocalVideo from "components/LocalVideo";
+import DeviceSelect from "components/DeviceSelect";
 import "styles/style.css";
 
 function Room() {
@@ -20,7 +22,7 @@ function Room() {
 
   useEffect(() => {
     init();
-  }, [room])
+  }, [room]);
 
   const init = async() => {
     const _room = room;
@@ -40,15 +42,16 @@ function Room() {
           alert('No streaming starts yet');
           navigate('/');
         }
-
         let _remoteParticipants = [];
         for (const participant of evt.remoteParticipants) {
           let videos = [];
           const unsubscribedVideos = participant.getUnsubscribedVideos();
+
           if (unsubscribedVideos.length) {
             const videoIds = unsubscribedVideos.map((video) => video.getVideoId());
             videos = await room.subscribe(videoIds);
           }
+
           _remoteParticipants.push({participant, videos});
           _remoteParticipants.forEach((remoteParticipant) => {
             const isSameId = remoteParticipant.participant.id === participant.id;
@@ -78,6 +81,7 @@ function Room() {
         });
       });
     });
+  };
     _room.on('remoteVideoPublished', () => {
       console.log('## remote video published');
     });
@@ -92,7 +96,7 @@ function Room() {
     });
   }
 
-  const disconnectRoom = async() => {
+  const disconnectRoom = () => {
     room.disconnect();
     ConnectLive.signOut();
     if (localMedia) localMedia.stop();
@@ -116,6 +120,9 @@ function Room() {
               <div>
                 <h1>Participants</h1>
                 {remoteParticipants.map((participant) => (<div key={participant}>{participant}</div>))}
+              </div>
+              <div>
+                <DeviceSelect localMedia={localMedia} />
               </div>
             </section>
             <section className="room-chat-container">
