@@ -1,75 +1,88 @@
-import React, { useState } from 'react';
-import { useRecoilState } from 'recoil';
-import { useEffect } from 'react';
-import {RoomState} from "store/roomState";
+import React, { useState } from "react";
+import { useRecoilState } from "recoil";
+import { useEffect, useRef } from "react";
+import { RoomState } from "store/roomState";
 
 const Chat = () => {
-  const [target,] = useState('');
-  const [message, setMessage] = useState('');
+  const [target] = useState("");
+  const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
   const [room] = useRecoilState(RoomState);
 
-  const handleSubmit = (e)=>{
+  const MessagesRef = useRef(null);
+
+  const handleSubmit = (e) => {
     e.preventDefault();
-    if(message) {
+    if (message) {
       let _target = [];
-      if(target) {
+      if (target) {
         _target.push(target);
       }
-      room.sendUserMessage(_target, message, 'web');
-      setMessages((oldMessages)=>{
-        return [...oldMessages, {
-          senderId: '나',
-          message: message
-        }]
+      room.sendUserMessage(_target, message, "web");
+      setMessages((oldMessages) => {
+        return [
+          ...oldMessages,
+          {
+            senderId: "나",
+            message: message,
+          },
+        ];
       });
 
-      setMessage('');
+      setMessage("");
     }
   };
 
-  useEffect(()=>{
-    if(room) {
-      room.on('userMessage', (e)=>{
-        setMessages((oldMessages)=>{
-          return [...oldMessages, {
-            senderId: e.senderId,
-            message: e.message
-          }]
+  useEffect(() => {
+    MessagesRef.current.scrollTop = MessagesRef.current.scrollHeight;
+  }, [messages]);
+
+  useEffect(() => {
+    if (room) {
+      room.on("userMessage", (e) => {
+        setMessages((oldMessages) => {
+          return [
+            ...oldMessages,
+            {
+              senderId: e.senderId,
+              message: e.message,
+            },
+          ];
         });
       });
     }
   }, [room]);
 
   return (
-      <aside class="chat-container">
-        <ul className="message-container">
-          {
-            messages.map((item, i)=>{
-              return (
-                  <li key={i}>
-                    <span className='decoration-sky-500/30 mr-1.5'>{item.senderId}: </span>
-                    <span>{item.message}</span>
-                  </li>
-              );
-            })
-          }
-        </ul>
-        <form onSubmit={handleSubmit}>
-          <div>
-            <input
-                className="massage-input"
-                type='text'
-                placeholder='input message'
-                value={message}
-                onChange={(e)=>{ setMessage(e.target.value); }}
-                required
-            />
-          </div>
-        </form>
-      </aside>
+    <aside class="chat-container">
+      <ul className="message-container" ref={MessagesRef}>
+        {messages.map((item, i) => {
+          return (
+            <li key={i}>
+              <span className="decoration-sky-500/30 mr-1.5">
+                {item.senderId}:{" "}
+              </span>
+              <span>{item.message}</span>
+            </li>
+          );
+        })}
+      </ul>
+      <form onSubmit={handleSubmit}>
+        <div>
+          <input
+            className="massage-input"
+            type="text"
+            placeholder="input message"
+            value={message}
+            onChange={(e) => {
+              setMessage(e.target.value);
+            }}
+            required
+          />
+        </div>
+      </form>
+    </aside>
   );
 };
 
 export default Chat;
-
