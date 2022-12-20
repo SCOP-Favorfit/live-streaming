@@ -15,7 +15,6 @@ function Room() {
   const [localMedia, setLocalMedia] = useState(null);
   const [remoteParticipants, setRemoteParticipants] = useState([]);
 
-
   const LC = useRef();
   const RC = useRef();
 
@@ -32,7 +31,6 @@ function Room() {
       });
 
       const localVideo = _localMedia.video?.attach();
-      // const localContainer = document.querySelector('#local-container');
       LC.textContent = '';
       LC.current.appendChild(localVideo)
       await room.publish([_localMedia]);
@@ -60,8 +58,6 @@ function Room() {
             const isSameId = remoteParticipant.participant.id === participant.id;
             if (isSameId) {
               const videos = participant.videos;
-              // const remoteContainer = document.querySelector('#remote-container');
-
               videos.forEach((video) => {
                 const remoteVideo = video.attach();
                 RC.textContent = '';
