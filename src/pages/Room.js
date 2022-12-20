@@ -78,12 +78,7 @@ function Room() {
         <main>
           <div className="room-content">
             <section className="room-video-container">
-              {isHost ?
-                <div>
-                  <button>mic</button>
-                  <button>video</button>
-                </div> : null}
-              <LocalVideo />
+              {isHost ? <LocalVideo /> : null}
               <div>
                 <h1>Participants</h1>
                 {remoteParticipants.map((participant) => (<div key={participant}>{participant}</div>))}
