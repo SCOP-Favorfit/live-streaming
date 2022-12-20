@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from "react";
+import React, {useState, useEffect, useRef } from "react";
 import {useRecoilState} from "recoil";
 import {RoomIdState, RoomState} from "store/roomState";
 import ConnectLive from "@connectlive/connectlive-web-sdk";
@@ -15,6 +15,9 @@ function Room() {
   const [localMedia, setLocalMedia] = useState(null);
   const [remoteParticipants, setRemoteParticipants] = useState([]);
 
+  const LC = useRef();
+  const RC = useRef();
+
   useEffect(() => {
     init();
   }, [room])
@@ -28,9 +31,8 @@ function Room() {
       });
 
       const localVideo = _localMedia.video?.attach();
-      const localContainer = document.querySelector('#local-container');
-      localContainer.textContent = '';
-      localContainer.appendChild(localVideo)
+      LC.textContent = '';
+      LC.current.appendChild(localVideo)
       await room.publish([_localMedia]);
     } // end of host event
     else {
@@ -56,12 +58,10 @@ function Room() {
             const isSameId = remoteParticipant.participant.id === participant.id;
             if (isSameId) {
               const videos = participant.videos;
-              const remoteContainer = document.querySelector('#remote-container');
-
               videos.forEach((video) => {
                 const remoteVideo = video.attach();
-                remoteContainer.textContent = '';
-                remoteContainer.appendChild(remoteVideo);
+                RC.textContent = '';
+                RC.current.appendChild(remoteVideo);
               });
             }
           });
@@ -106,8 +106,8 @@ function Room() {
         <main>
           <div className="room-content">
             <section className="room-video-container">
-              <div id="local-container"></div>
-              <div id="remote-container"></div>
+              <div ref={LC}></div>
+              <div ref={RC}></div>
               <div>
                 <h1>Participants</h1>
                 {remoteParticipants.map((participant) => (<div key={participant}>{participant}</div>))}
