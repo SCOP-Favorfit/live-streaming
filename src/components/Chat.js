@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useRecoilState } from "recoil";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { RoomState } from "store/roomState";
 
 const Chat = () => {
@@ -8,6 +8,8 @@ const Chat = () => {
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
   const [room] = useRecoilState(RoomState);
+
+  const MessagesRef = useRef(null);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -32,8 +34,7 @@ const Chat = () => {
   };
 
   useEffect(() => {
-    let chatUl = document.querySelector(".message-container");
-    chatUl.scrollTop = chatUl.scrollHeight;
+    MessagesRef.current.scrollTop = MessagesRef.current.scrollHeight;
   }, [messages]);
 
   useEffect(() => {
@@ -54,7 +55,7 @@ const Chat = () => {
 
   return (
     <aside class="chat-container">
-      <ul className="message-container">
+      <ul className="message-container" ref={MessagesRef}>
         {messages.map((item, i) => {
           return (
             <li key={i}>
