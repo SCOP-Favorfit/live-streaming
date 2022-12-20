@@ -1,16 +1,17 @@
-import React, {useState, useEffect, useRef } from "react";
-import {useRecoilState} from "recoil";
-import {RoomIdState, RoomState} from "store/roomState";
+import React, { useState, useEffect, useRef } from "react";
+import { useRecoilState } from "recoil";
+import { RoomIdState, RoomState } from "store/roomState";
 import ConnectLive from "@connectlive/connectlive-web-sdk";
-import {HostState} from "store/hostState";
-import {useNavigate} from "react-router";
+import { HostState } from "store/hostState";
+import { useNavigate } from "react-router";
 import Chat from "components/Chat";
+import DeviceSelect from "components/DeviceSelect";
 import "styles/style.css";
 
 function Room() {
   const navigate = useNavigate();
-  const [roomId,] = useRecoilState(RoomIdState);
-  const [room,] = useRecoilState(RoomState);
+  const [roomId] = useRecoilState(RoomIdState);
+  const [room] = useRecoilState(RoomState);
   const [isHost, setIsHost] = useRecoilState(HostState);
   const [localMedia, setLocalMedia] = useState(null);
   const [remoteParticipants, setRemoteParticipants] = useState([]);
@@ -20,9 +21,9 @@ function Room() {
 
   useEffect(() => {
     init();
-  }, [room])
+  }, [room]);
 
-  const init = async() => {
+  const init = async () => {
     const _room = room;
     if (isHost) {
       const _localMedia = await ConnectLive.createLocalMedia({
@@ -30,62 +31,70 @@ function Room() {
         audio: true,
       });
 
+      setLocalMedia(_localMedia);
+
       const localVideo = _localMedia.video?.attach();
-      LC.textContent = '';
-      LC.current.appendChild(localVideo)
+      LC.textContent = "";
+      LC.current.appendChild(localVideo);
       await room.publish([_localMedia]);
     } // end of host event
     else {
-      _room.on('connected', async (evt) => {
+      _room.on("connected", async (evt) => {
         if (!evt.remoteParticipants.length) {
           room.disconnect();
           ConnectLive.signOut();
-          alert('No streaming starts yet');
-          navigate('/');
+          alert("No streaming starts yet");
+          navigate("/");
         }
-        let _remoteParticipants = []
+        let _remoteParticipants = [];
         for (const participant of evt.remoteParticipants) {
           let videos = [];
           const unsubscribedVideos = participant.getUnsubscribedVideos();
 
           if (unsubscribedVideos.length) {
-            const videoIds = unsubscribedVideos.map((video) => video.getVideoId());
+            const videoIds = unsubscribedVideos.map((video) =>
+              video.getVideoId()
+            );
             videos = await room.subscribe(videoIds);
           }
 
-          _remoteParticipants.push({participant, videos});
+          _remoteParticipants.push({ participant, videos });
           _remoteParticipants.forEach((remoteParticipant) => {
-            const isSameId = remoteParticipant.participant.id === participant.id;
+            const isSameId =
+              remoteParticipant.participant.id === participant.id;
             if (isSameId) {
               const videos = participant.videos;
               videos.forEach((video) => {
                 const remoteVideo = video.attach();
-                RC.textContent = '';
+                RC.textContent = "";
                 RC.current.appendChild(remoteVideo);
               });
             }
           });
-          setRemoteParticipants((oldRemoteParticipants) => [...oldRemoteParticipants, participant.id]);
+          setRemoteParticipants((oldRemoteParticipants) => [
+            ...oldRemoteParticipants,
+            participant.id,
+          ]);
         }
       });
     } // end of guest event
-    room.on('disconnected', async () => {
+    room.on("disconnected", async () => {
       disconnectRoom();
     });
-    _room.on('participantEntered', (evt) => {
+    _room.on("participantEntered", (evt) => {
       setRemoteParticipants((oldRemoteParticipants) => [
         ...oldRemoteParticipants,
         evt.remoteParticipant.id,
       ]);
     });
-    _room.on('participantLeft', (evt) => {
+    _room.on("participantLeft", (evt) => {
       setRemoteParticipants((oldRemoteParticipants) => {
         return oldRemoteParticipants.filter((participant) => {
           return evt.remoteParticipantId !== participant;
         });
       });
     });
-  }
+  };
 
   const disconnectRoom = () => {
     room.disconnect();
@@ -93,32 +102,37 @@ function Room() {
     localMedia?.stop();
     setLocalMedia(null);
     setIsHost(false);
-    navigate('/');
-  }
+    navigate("/");
+  };
 
   return (
-      <div className="container">
-        <header className="room-header">
-          <h1 className="room-title">{roomId}</h1>
-          <div className="localParticipant-name">{room.localParticipant.id}</div>
-          <button onClick={disconnectRoom}>Exit</button>
-        </header>
-        <main>
-          <div className="room-content">
-            <section className="room-video-container">
-              <div ref={LC}></div>
-              <div ref={RC}></div>
-              <div>
-                <h1>Participants</h1>
-                {remoteParticipants.map((participant) => (<div key={participant}>{participant}</div>))}
-              </div>
-            </section>
-            <section className="room-chat-container">
-              <Chat />
-            </section>
-          </div>
-        </main>
-      </div>
+    <div className="container">
+      <header className="room-header">
+        <h1 className="room-title">{roomId}</h1>
+        <div className="localParticipant-name">{room.localParticipant.id}</div>
+        <button onClick={disconnectRoom}>Exit</button>
+      </header>
+      <main>
+        <div className="room-content">
+          <section className="room-video-container">
+            <div ref={LC}></div>
+            <div ref={RC}></div>
+            <div>
+              <h1>Participants</h1>
+              {remoteParticipants.map((participant) => (
+                <div key={participant}>{participant}</div>
+              ))}
+            </div>
+            <div className="px-4 py-5 bg-white sm:p-6">
+              <DeviceSelect localMedia={localMedia} />
+            </div>
+          </section>
+          <section className="room-chat-container">
+            <Chat />
+          </section>
+        </div>
+      </main>
+    </div>
   );
 }
 
