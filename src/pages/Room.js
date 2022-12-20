@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useRef } from "react";
+import React, {useState, useEffect} from "react";
 import {useRecoilState} from "recoil";
 import {RoomIdState, RoomState} from "store/roomState";
 import ConnectLive from "@connectlive/connectlive-web-sdk";
@@ -6,17 +6,16 @@ import {HostState} from "store/hostState";
 import {useNavigate} from "react-router";
 import Chat from "components/Chat";
 import "styles/style.css";
+import {LocalMediaState} from "store/localState";
+import LocalVideo from "components/LocalVideo";
 
 function Room() {
   const navigate = useNavigate();
-  const [roomId,] = useRecoilState(RoomIdState);
-  const [room,] = useRecoilState(RoomState);
+  const [roomId] = useRecoilState(RoomIdState);
+  const [room] = useRecoilState(RoomState);
   const [isHost, setIsHost] = useRecoilState(HostState);
-  const [localMedia, setLocalMedia] = useState(null);
+  const [localMedia, setLocalMedia] = useRecoilState(LocalMediaState);
   const [remoteParticipants, setRemoteParticipants] = useState([]);
-
-  const LC = useRef();
-  const RC = useRef();
 
   useEffect(() => {
     init();
@@ -29,11 +28,7 @@ function Room() {
         video: true,
         audio: true,
       });
-
-      const localVideo = _localMedia.video?.attach();
-      LC.textContent = '';
-      LC.current.appendChild(localVideo)
-      await room.publish([_localMedia]);
+      setLocalMedia(_localMedia);
     } // end of host event
     else {
       _room.on('connected', async (evt) => {
@@ -43,32 +38,9 @@ function Room() {
           alert('No streaming starts yet');
           navigate('/');
         }
-        let _remoteParticipants = []
-        for (const participant of evt.remoteParticipants) {
-          let videos = [];
-          const unsubscribedVideos = participant.getUnsubscribedVideos();
-
-          if (unsubscribedVideos.length) {
-            const videoIds = unsubscribedVideos.map((video) => video.getVideoId());
-            videos = await room.subscribe(videoIds);
-          }
-
-          _remoteParticipants.push({participant, videos});
-          _remoteParticipants.forEach((remoteParticipant) => {
-            const isSameId = remoteParticipant.participant.id === participant.id;
-            if (isSameId) {
-              const videos = participant.videos;
-              videos.forEach((video) => {
-                const remoteVideo = video.attach();
-                RC.textContent = '';
-                RC.current.appendChild(remoteVideo);
-              });
-            }
-          });
-          setRemoteParticipants((oldRemoteParticipants) => [...oldRemoteParticipants, participant.id]);
-        }
       });
     } // end of guest event
+
     room.on('disconnected', async () => {
       disconnectRoom();
     });
@@ -87,7 +59,7 @@ function Room() {
     });
   }
 
-  const disconnectRoom = () => {
+  const disconnectRoom = async() => {
     room.disconnect();
     ConnectLive.signOut();
     localMedia?.stop();
@@ -106,8 +78,12 @@ function Room() {
         <main>
           <div className="room-content">
             <section className="room-video-container">
-              <div ref={LC}></div>
-              <div ref={RC}></div>
+              {isHost ?
+                <div>
+                  <button>mic</button>
+                  <button>video</button>
+                </div> : null}
+              <LocalVideo />
               <div>
                 <h1>Participants</h1>
                 {remoteParticipants.map((participant) => (<div key={participant}>{participant}</div>))}
