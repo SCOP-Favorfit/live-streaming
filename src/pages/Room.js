@@ -32,7 +32,6 @@ function Room() {
       });
 
       const localVideo = _localMedia.video?.attach();
-      console.log(LC);
       // const localContainer = document.querySelector('#local-container');
       LC.textContent = '';
       LC.current.appendChild(localVideo)
@@ -110,8 +109,8 @@ function Room() {
         <main>
           <div className="room-content">
             <section className="room-video-container">
-              <div id="local-container" ref={LC}></div>
-              <div id="remote-container" ref={RC}></div>
+              <div ref={LC}></div>
+              <div ref={RC}></div>
               <div>
                 <h1>Participants</h1>
                 {remoteParticipants.map((participant) => (<div key={participant}>{participant}</div>))}
