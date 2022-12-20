@@ -4,8 +4,7 @@ import {useRecoilState} from "recoil";
 import ConnectLive from "@connectlive/connectlive-web-sdk";
 import {RoomIdState, RoomState} from "store/roomState";
 import {HostState} from "store/hostState";
-import {LocalMediaState} from "store/localState";;
-import { useNavigate } from "react-router";
+import {LocalMediaState} from "store/localState";
 import Chat from "components/Chat";
 import LocalVideo from "components/LocalVideo";
 import DeviceSelect from "components/DeviceSelect";
@@ -81,7 +80,6 @@ function Room() {
         });
       });
     });
-  };
     _room.on('remoteVideoPublished', () => {
       console.log('## remote video published');
     });
@@ -94,7 +92,7 @@ function Room() {
     room.on('disconnected', async () => {
       disconnectRoom();
     });
-  }
+  };
 
   const disconnectRoom = () => {
     room.disconnect();
