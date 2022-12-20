@@ -123,7 +123,7 @@ function Room() {
                 <div key={participant}>{participant}</div>
               ))}
             </div>
-            <div className="px-4 py-5 bg-white sm:p-6">
+            <div>
               <DeviceSelect localMedia={localMedia} />
             </div>
           </section>
