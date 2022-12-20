@@ -100,6 +100,7 @@ function Room() {
       <div className="container">
         <header className="room-header">
           <h1 className="room-title">{roomId}</h1>
+          <div className="localParticipant-name">{room.localParticipant.id}</div>
           <button onClick={disconnectRoom}>Exit</button>
         </header>
         <main>
